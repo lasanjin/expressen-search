@@ -3,7 +3,7 @@ search() {
 
     declare arguments
     for arg in "$@"; do
-        arguments+="match(\"$arg\"; \"x\") and "
+        arguments+="match(\"$arg\"; \"i\") and "
     done
 
     echo -n "Fetching data..."
