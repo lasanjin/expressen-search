@@ -1,6 +1,8 @@
 ## Description
 Outputs historic data from expressen api.
 
+<img src="expsearch-GIF.gif" width="640">
+
 ## Get jq
 Alt 1
 1. Install jq
