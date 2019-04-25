@@ -43,11 +43,11 @@ search() {
 
         local date=${data[i]}
         local food=${data[$((i + 1))]}
-
         formated=$(date --date "$date" $dateformat)
 
+        #remove useless data
         if [[ "$food" != *"visning"* ]]; then
-        newdata+=([$formated]=$food)
+            newdata+=([$formated]=$food)
         fi
     done
 
