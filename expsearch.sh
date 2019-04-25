@@ -60,10 +60,6 @@ search() {
     echo ""
 }
 
-format_data() {
-    echo "hej"
-}
-
 build_params() {
     declare local arguments
     for arg in $args; do
