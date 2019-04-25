@@ -1,22 +1,30 @@
 search() {
-    local fromdate=$1 && shift
-    local todate=$1 && shift
-    local args=($@)
+    local -r dateformat='+%Y-%m-%d'
+    declare fromdate
+    declare todate
+    declare param
 
-    if [ -z $1 ]; then
-        echo -e "Invalid input"
-        return 0
-    elif ! is_valid $fromdate || ! is_valid $todate; then
-        echo "Invalid date"
-        return 0
+    if [ "$1" != "all" ]; then
+        fromdate=$1 && shift
+        todate=$1 && shift
+        local args=$@
+
+        if [ -z $1 ]; then
+            echo -e "Invalid input"
+            return 0
+        elif ! is_valid $fromdate || ! is_valid $todate; then
+            echo "Invalid date"
+            return 0
+        fi
+
+        build_params
+    else
+        param="match(\".\")"
+        local today=$(date $dateformat)
+        fromdate='2000-01-01'
+        todate=$(date --date "$today+10days" $dateformat)
     fi
 
-    declare arguments
-    for arg in "$args"; do
-        arguments+="match(\"$arg\"; \"i\") and "
-    done
-
-    local conditions=${arguments:0:-5}
     local url=$(expressen_url)
 
     expressen_data
@@ -28,25 +36,40 @@ search() {
     fi
 
     #format data
-    declare -A newdata
-    declare formated
+    declare -A local newdata
+    declare local formated
     local length=${#data[@]}
     for ((i = 0; i < $length; i += 2)); do
 
         local date=${data[i]}
         local food=${data[$((i + 1))]}
 
-        formated=$(date --date "$date" +'%Y-%m-%d')
+        formated=$(date --date "$date" $dateformat)
+
+        if [[ "$food" != *"visning"* ]]; then
         newdata+=([$formated]=$food)
+        fi
     done
 
-    #sort data
+    #sort and print data
     for key in "${!newdata[@]}"; do
-        echo $key ' - ' ${newdata[$key]}
+        echo $key '-' ${newdata[$key]}
     done | sort -k1
 
     echo -e "\n${#newdata[@]} matches"
     echo ""
+}
+
+format_data() {
+    echo "hej"
+}
+
+build_params() {
+    declare local arguments
+    for arg in $args; do
+        arguments+="match(\"$arg\"; \"i\") and "
+    done
+    param=${arguments:0:-5}
 }
 
 expressen_url() {
@@ -58,7 +81,7 @@ expressen_url() {
 expressen_data() {
     echo -n "Fetching data..."
     local rawdata=$(curl -s $url |
-        jq -r ".[] | select(.dish.dishName | $conditions) | .startDate, .dish.dishName")
+        jq -r ".[] | select(.dish.dishName | $param) | .startDate, .dish.dishName")
 
     IFS=$'\n'
     read -r -a data -d '' <<<"$rawdata"
