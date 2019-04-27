@@ -1,62 +1,78 @@
+#!/bin/bash
+
 search() {
-    local -r dateformat='+%Y-%m-%d'
-    declare fromdate
-    declare todate
-    declare param
+    local fromdate=$1 && shift
+    local todate=$1 && shift
+    local args=$@
 
-    if [ "$1" != "all" ]; then
-        fromdate=$1 && shift
-        todate=$1 && shift
-        local args=$@
-
-        if [ -z $1 ]; then
-            echo -e "Invalid input"
-            return 0
-        elif ! is_valid $fromdate || ! is_valid $todate; then
-            echo "Invalid date"
-            return 0
-        fi
-
-        build_params
-    else
-        param="match(\".\")"
-        local today=$(date $dateformat)
-        fromdate='2000-01-01'
-        todate=$(date --date "$today+10days" $dateformat)
+    #validate dates
+    if [ -z $1 ]; then
+        echo -e "Invalid input"
+        return 0
+    elif ! is_valid $fromdate || ! is_valid $todate; then
+        echo "Invalid date"
+        return 0
     fi
 
     local url=$(expressen_url)
 
+    #get data
+    build_params
     expressen_data
-    if [ -z "$data" ]; then
+    if is_empty $data; then
         echo -e "\rNo data \033[K"
         return 0
     else
         echo -e "\n"
     fi
 
-    #format data
     declare -A local newdata
-    declare local formated
+    declare local count
+    local -r dateformat='+%Y-%m-%d'
     local length=${#data[@]}
+
+    #format dates
     for ((i = 0; i < $length; i += 2)); do
 
         local date=${data[i]}
         local food=${data[$((i + 1))]}
-        formated=$(date --date "$date" $dateformat)
+        local formated=$(date --date "$date" $dateformat)
 
-        #remove useless data
-        if [[ "$food" != *"visning"* ]]; then
-            newdata+=([$formated]=$food)
+        if is_food $food; then
+            local prev=${newdata[$formated]}
+
+            if is_empty $prev; then
+                newdata+=([$formated]="$food")
+            else
+                newdata[$formated]="$prev;$food;"
+            fi
+
+            ((count++))
         fi
     done
 
-    #sort and print data
-    for key in "${!newdata[@]}"; do
-        echo $key '-' ${newdata[$key]}
-    done | sort -k1
+    #sort data
+    IFS=';'
+    read -r -a sorted -d '' <<<"$(
+        for key in "${!newdata[@]}"; do
+            printf "%s\n" "$key • ${newdata[$key]}"
+        done | sort -k1
+    )"
 
-    echo -e "\n${#newdata[@]} matches"
+    #print data
+    local length=${#sorted[@]}
+    for ((i = 0; i < $length; i += 1)); do
+
+        local current=${sorted[i]}
+
+        if contains_digits "$current"; then
+            echo $current
+        elif ! is_empty $current && ! is_newline $current; then
+            echo -e "\t   • $current"
+        fi
+    done
+
+    echo -e "\n$count matches"
     echo ""
 }
 
@@ -65,6 +81,7 @@ build_params() {
     for arg in $args; do
         arguments+="match(\"$arg\"; \"i\") and "
     done
+
     param=${arguments:0:-5}
 }
 
@@ -86,6 +103,22 @@ expressen_data() {
 
 is_valid() {
     [[ $1 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && date -d "$1" >/dev/null
+}
+
+is_food() {
+    [[ "$1" != *"visning"* ]]
+}
+
+is_empty() {
+    [ -z $1 ]
+}
+
+contains_digits() {
+    [[ "$1" =~ [0-9] ]]
+}
+
+is_newline() {
+    [[ $1 == *$'\n'* ]]
 }
 
 search $@

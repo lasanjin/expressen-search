@@ -39,6 +39,7 @@ $ ./expsearch.sh $1 $2 $@
   -  *required*
   -  start date
      -  input `YYYY-MM-DD`
+     -  goes back to 2016-10-10
 
 - `$2`
   -  *required*
@@ -49,14 +50,11 @@ $ ./expsearch.sh $1 $2 $@
   -  *required*
   -  search parameters
      -  *Swedish*
-  -  case insensitive
+     -  case insensitive
      -  input `a-z`
-     -  example
-           -  Köttbullar
-
-Alt 2
-
-```
-$ ./expsearch.sh all
-```
-- Outputs all historic data
+        -  example
+              -  Köttbullar lingon
+     -  input `.` to list all
+     -  logic
+        -  $1 and $2 and $3 ... ATM
+        -  perhaps $1 or $2 or $3 ... in the future
