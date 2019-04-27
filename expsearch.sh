@@ -42,9 +42,9 @@ search() {
             local prev=${newdata[$formated]}
 
             if is_empty $prev; then
-                newdata+=([$formated]="$food")
+                newdata+=([$formated]="$food;")
             else
-                newdata[$formated]="$prev;$food;"
+                newdata[$formated]="$prev$food;"
             fi
 
             ((count++))
