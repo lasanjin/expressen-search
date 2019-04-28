@@ -55,7 +55,7 @@ search() {
     IFS=';'
     read -r -a sorted -d '' <<<"$(
         for key in "${!newdata[@]}"; do
-            printf "%s\n" "$key • ${newdata[$key]}"
+            printf "%s\n" "$key: ${newdata[$key]}"
         done | sort -k1
     )"
 
@@ -66,13 +66,13 @@ search() {
         local current=${sorted[i]}
 
         if contains_digits "$current"; then
-            echo $current
+            echo -n $current
         elif ! is_empty $current && ! is_newline $current; then
-            echo -e "\t   • $current"
+            echo -en "\n\t    $current"
         fi
     done
 
-    echo -e "\n$count matches"
+    echo -e "\n\n$count matches"
     echo ""
 }
 
