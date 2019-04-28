@@ -14,10 +14,10 @@ search() {
         return 0
     fi
 
-    local url=$(expressen_url)
+    build_params
 
     #get data
-    build_params
+    local url=$(expressen_url)
     expressen_data
     if is_empty $data; then
         echo -e "\rNo data \033[K"
@@ -81,7 +81,7 @@ build_params() {
     for arg in $args; do
         arguments+="match(\"$arg\"; \"i\") and "
     done
-
+    
     param=${arguments:0:-5}
 }
 
