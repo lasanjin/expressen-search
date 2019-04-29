@@ -5,7 +5,7 @@ search() {
     local todate=$1 && shift
     local args=$@
 
-    #validate dates
+    #validate input
     if [ -z $1 ]; then
         echo -e "Invalid input"
         return 0
@@ -79,9 +79,9 @@ search() {
 build_params() {
     declare local arguments
     for arg in $args; do
-        arguments+="match(\"$arg\"; \"i\") and "
+        arguments+="match(\"\\\b$arg\\\b\"; \"i\") and "
     done
-    
+
     param=${arguments:0:-5}
 }
 

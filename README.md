@@ -30,8 +30,6 @@ $ sudo chmod +x ./expsearch.sh
 
 2. Run script
 
-Alt 1
-
 ```
 $ ./expsearch.sh $1 $2 $@
 ```
@@ -56,5 +54,7 @@ $ ./expsearch.sh $1 $2 $@
               -  Köttbullar lingon
      -  input `.` to list all
      -  logic
+        -  exact match
+           -  if input is "potatis", it will match "potatis" and not "potatismos"
         -  $1 and $2 and $3 ... ATM
         -  perhaps $1 or $2 or $3 ... in the future
