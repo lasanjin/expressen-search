@@ -79,6 +79,11 @@ search() {
 build_params() {
     declare local arguments
     for arg in $args; do
+        if [ "$arg" == "." ]; then
+            arguments+="match(\".\"; \"i\") and "
+            break
+        fi
+
         arguments+="match(\"\\\b$arg\\\b\"; \"i\") and "
     done
 
