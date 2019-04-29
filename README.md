@@ -54,7 +54,7 @@ $ ./expsearch.sh $1 $2 $@
               -  Köttbullar lingon
      -  input `.` to list all
      -  logic
-        -  exact match
+        -  exact match (whole words only)
            -  if input is "potatis", it will match "potatis" and not "potatismos"
         -  $1 and $2 and $3 ... ATM
         -  perhaps $1 or $2 or $3 ... in the future
