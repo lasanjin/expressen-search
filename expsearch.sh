@@ -15,9 +15,9 @@ search() {
     fi
 
     build_params
+    local url=$(expressen_url)
 
     #get data
-    local url=$(expressen_url)
     expressen_data
     if is_empty $data; then
         echo -e "\rNo data \033[K"
@@ -26,30 +26,10 @@ search() {
         echo -e "\n"
     fi
 
-    declare -A local newdata
+    #count food & map formated dates to food in order to sort by date
     declare local count
-    local -r dateformat='+%Y-%m-%d'
-    local length=${#data[@]}
-
-    #format dates
-    for ((i = 0; i < $length; i += 2)); do
-
-        local date=${data[i]}
-        local food=${data[$((i + 1))]}
-        local formated=$(date --date "$date" $dateformat)
-
-        if is_food $food; then
-            local prev=${newdata[$formated]}
-
-            if is_empty $prev; then
-                newdata+=([$formated]="$food;")
-            else
-                newdata[$formated]="$prev$food;"
-            fi
-
-            ((count++))
-        fi
-    done
+    declare -A local newdata
+    format
 
     #sort data
     IFS=';'
@@ -60,18 +40,9 @@ search() {
     )"
 
     #print data
-    local length=${#sorted[@]}
-    for ((i = 0; i < $length; i += 1)); do
+    print
 
-        local current=${sorted[i]}
-
-        if contains_digits "$current"; then
-            echo -n $current
-        elif ! is_empty $current && ! is_newline $current; then
-            echo -en "\n\t    $current"
-        fi
-    done
-
+    unset IFS
     echo -e "\n\n$count matches"
     echo ""
 }
@@ -91,7 +62,9 @@ build_params() {
 }
 
 expressen_url() {
-    local api='v1/mealprovidingunits/3d519481-1667-4cad-d2a3-08d558129279/dishoccurrences?startDate='$fromdate'&endDate='$todate''
+    local sDate='?startDate='$fromdate''
+    local eDate='&endDate='$todate''
+    local api='v1/mealprovidingunits/3d519481-1667-4cad-d2a3-08d558129279/dishoccurrences'$sDate''$eDate''
     local url='http://carbonateapiprod.azurewebsites.net/api/'$api''
     echo $url
 }
@@ -104,6 +77,43 @@ expressen_data() {
     IFS=$'\n'
     read -r -a data -d '' <<<"$rawdata"
     unset IFS
+}
+
+format() {
+    local -r dateformat='+%Y-%m-%d'
+    local length=${#data[@]}
+    for ((i = 0; i < $length; i += 2)); do
+
+        local date=${data[i]}
+        local food=${data[$((i + 1))]}
+        local formated=$(date --date "$date" $dateformat)
+
+        if is_food $food; then
+            local prev=${newdata[$formated]}
+
+            if is_empty $prev; then
+                newdata+=([$formated]="$food;")
+            else
+                newdata[$formated]="$prev$food;"
+            fi
+
+            ((count++))
+        fi
+    done
+}
+
+print() {
+    local length=${#sorted[@]}
+    for ((i = 0; i < $length; i += 1)); do
+
+        local current=${sorted[i]}
+
+        if contains_digits "$current"; then
+            echo -n $current
+        elif ! is_empty $current && ! is_newline $current; then
+            echo -en "\n\t    $current"
+        fi
+    done
 }
 
 is_valid() {
