@@ -20,6 +20,7 @@ search() {
     #get data
     expressen_data
     if is_empty $data; then
+        #echo over previous echo
         echo -e "\rNo data \033[K"
         return 0
     else
@@ -31,7 +32,7 @@ search() {
     declare -A local newdata
     format
 
-    #sort data
+    #sort data by dates
     IFS=';'
     read -r -a sorted -d '' <<<"$(
         for key in "${!newdata[@]}"; do
@@ -57,7 +58,7 @@ build_params() {
 
         arguments+="match(\"\\\b$arg\\\b\"; \"i\") and "
     done
-
+    #crop last ' and '
     param=${arguments:0:-5}
 }
 
@@ -105,7 +106,6 @@ format() {
 print() {
     local length=${#sorted[@]}
     for ((i = 0; i < $length; i += 1)); do
-
         local current=${sorted[i]}
 
         if contains_digits "$current"; then
