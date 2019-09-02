@@ -1,4 +1,4 @@
-## Chalmers Expressen CLI
+# Chalmers Expressen CLI
 Another project I did to learn some basic Bash. Also to check how often we get Meatballs (Köttbullar) on the Expressen menu :)
 
 ## Description
