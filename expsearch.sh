@@ -7,11 +7,11 @@ search() {
 
     #validate input
     if [ -z $1 ]; then
-        echo -e "Invalid input"
-        return 0
+        usage
+        return
     elif ! is_valid $fromdate || ! is_valid $todate; then
-        echo "Invalid date"
-        return 0
+        usage
+        return
     fi
 
     build_params
@@ -21,8 +21,8 @@ search() {
     expressen_data
     if is_empty $data; then
         #echo over previous echo
-        echo -e "\rNo data \033[K"
-        return 0
+        echo -e "\rNO DATA \033[K"
+        return
     else
         echo -e "\n"
     fi
@@ -44,8 +44,7 @@ search() {
     print
 
     unset IFS
-    echo -e "\n\n$count matches"
-    echo ""
+    echo -e "\n\n$count MATCHES"
 }
 
 build_params() {
@@ -71,9 +70,9 @@ expressen_url() {
 }
 
 expressen_data() {
-    echo -n "Fetching data..."
+    echo -n "FETCHING DATA..."
     local rawdata=$(curl -s $url |
-        jq -r ".[] | select(.dish.dishName | $param) | .startDate, .dish.dishName")
+        ./lib/jq-linux64 -r ".[] | select(.dish.dishName | $param) | .startDate, .dish.dishName")
 
     IFS=$'\n'
     read -r -a data -d '' <<<"$rawdata"
@@ -134,6 +133,10 @@ contains_digits() {
 
 is_newline() {
     [[ $1 == *$'\n'* ]]
+}
+
+usage() {
+    echo './expsearch.sh <FROM_DATE> <TO_DATE> <INGREDIENT>|.'
 }
 
 search $@

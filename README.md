@@ -1,64 +1,43 @@
 # Chalmers Expressen CLI
-Another project I did to learn some basic Bash. Also to check how often we get Meatballs (Köttbullar) on the Expressen menu :)
+Check Chalmers Expressen history, e.g. how often Meatballs (Köttbullar) has been on the Expressen menu `:)`
+
 
 ## Description
 Gets, maps, sorts & outputs historic data from expressen [api](https://chalmerskonferens.se/en/api/).
 
-<img src="expsearch-GIF.gif" width="640">
 
-## Get jq
-Alt 1
-1. Install jq
-```
-$ sudo apt-get install jq
-```
-
-Alt 2
-1. Download jq
-```
-$ wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-```
-2. Make script executable
-```
-$ sudo chmod +x ./jq-linux64.sh 
-```
-1. Replace `jq` with `./jq-linux64` in [expsearch.sh](expsearch.sh)
+## Demo
+<img src="demo.gif" width="640">
 
 
 ## How to run
-1. Make script executable
 ```
-$ sudo chmod +x ./expsearch.sh 
+$ ./expsearch.sh <FROM_DATE> <TO_DATE> <INGREDIENTS>|.
 ```
-
-2. Run script
-
-```
-$ ./expsearch.sh $1 $2 $@
-```
-- `$1` 
+- `<FROM_DATE>` 
   -  *required*
-  -  start date
-     -  input `YYYY-MM-DD`
-     -  goes back to 2016-10-10
+  -  Start date
+     -  Input `YYYY-MM-DD`
+     -  Goes back to 2016-10-10
 
-- `$2`
+- `<TO_DATE>`
   -  *required*
-  -  end date
-     -  input `YYYY-MM-DD`
+  -  End date
+     -  Input `YYYY-MM-DD`
 
-- `$@`
+- `<INGREDIENT> | .`
   -  *required*
-  -  search parameters
+  -  Search parameters
      -  *Swedish*
-     -  case insensitive
-     -  input `a-z`
-        -  example
-              -  köttbullar lingon gräddsås
-              -  kyckling ris
-     -  input `.` to list all
-     -  logic
-        -  exact match (whole words only)
-           -  if input is "potatis", it will match "potatis" and not "potatismos"
-        -  $1 and $2 and $3 ... ATM
-        -  perhaps $1 or $2 or $3 ... in the future
+     -  Case insensitive
+     -  Input `a-z`
+        -  Example
+              -  `köttbullar lingon gräddsås`
+              -  `kyckling ris`
+              -  `ris`
+     -  Input `.` to list all
+     -  How it works
+        -  Exact match (whole words only)
+           -  If input is `potatis`, it will match `potatis` and not `potatismos`
+        -  `<INGREDIENT_1>` AND `<INGREDIENT_2>` AND `<INGREDIENT_3>` ... ATM
+        -  Might add Perhaps `<INGREDIENT_1>` OR `<INGREDIENT_2>` ... in the future
