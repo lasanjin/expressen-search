@@ -1,5 +1,5 @@
 # Chalmers Expressen CLI
-Check Chalmers Expressen history, e.g. how often Meatballs (Köttbullar) has been on the Expressen menu `:)`
+Outputs Chalmers Expressen history, e.g. how often Meatballs (Köttbullar) has been on the Expressen menu `:)`
 
 
 ## Description
