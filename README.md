@@ -40,4 +40,4 @@ $ ./expsearch.sh <FROM_DATE> <TO_DATE> <INGREDIENTS>|.
         -  Exact match (whole words only)
            -  If input is `potatis`, it will match `potatis` and not `potatismos`
         -  `<INGREDIENT_1>` AND `<INGREDIENT_2>` AND `<INGREDIENT_3>` ... ATM
-        -  Might add Perhaps `<INGREDIENT_1>` OR `<INGREDIENT_2>` ... in the future
+        -  Might add `<INGREDIENT_1>` OR `<INGREDIENT_2>` ... in the future
